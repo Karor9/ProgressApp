@@ -4,10 +4,11 @@
              x:Class="ProgressApp.MainPage"
              x:Name="ThisPage"
              xmlns:viewmodel="clr-namespace:ProgressApp.ViewModel"
+             xmlns:data="clr-namespace:ProgressApp.Data"
              x:DataType="viewmodel:MainViewModel">
 
-    <Grid RowDefinitions="100, Auto, *"
-          ColumnDefinitions=".75*, .25*"
+    <Grid RowDefinitions="100, Auto, Auto, *"
+          ColumnDefinitions=".50*, .25*, .25*"
           Padding="10"
           RowSpacing="10"
           ColumnSpacing="10">
@@ -18,16 +19,27 @@
 
         <Entry Placeholder="Enter name"
                Grid.Row="1"
+               Grid.ColumnSpan="2"
+               Grid.Column="0"
                Text="{Binding Text}"/>
         <Button Text="Add"
                 Command="{Binding AddCommand}"
                 Grid.Row="1"
-                Grid.Column="1"/>
-        <CollectionView Grid.Row="2" Grid.ColumnSpan="2"
+                Grid.Column="2"/>
+        <Entry Placeholder="Current Chapter"
+               Grid.Row="2"
+               Grid.Column="0"
+               Text="{Binding CurrentChapter}"/>
+        <Entry Placeholder="Max Chapters"
+               Grid.Row="2"
+               Grid.ColumnSpan="2"
+               Grid.Column="1"
+               Text="{Binding TotalChapter}"/>
+        <CollectionView Grid.Row="3" Grid.ColumnSpan="4"
                         ItemsSource="{Binding Items}">
             
             <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="{x:Type x:String}">
+                <DataTemplate x:DataType="data:DataClass">
                     <SwipeView>
                         <SwipeView.RightItems>
                             <SwipeItems>
@@ -38,13 +50,35 @@
                                            />
                             </SwipeItems>
                         </SwipeView.RightItems>
-                        <Grid Padding="0,5">
-                            <Border>
-                                <Label Text="{Binding .}"
-                                   FontSize="36"
-                                   Padding="10"/>
-                            </Border>
-                        </Grid>
+                        <Border>
+                            <Grid Padding="0,2"
+                                  ColumnDefinitions=".8*, .085*, .03*, .085*"
+                                  RowSpacing="10"
+                                  ColumnSpacing="10"
+                                  >
+                                <Label Text="{Binding FieldName}"
+                                       FontSize="24"
+                                       Grid.Column="0"
+                                       VerticalTextAlignment="Center"
+                                        />
+                                <Label Text="{Binding CurrentChapter}"
+                                        FontSize="24"
+                                       Grid.Column="1"
+                                       HorizontalTextAlignment="End"
+                                       VerticalTextAlignment="Center"
+                                        />
+                                <Label Text="/"
+                                        FontSize="24"
+                                       Grid.Column="2"
+                                       VerticalTextAlignment="Center"
+                                        />
+                                <Label Text="{Binding MaxChapter}"
+                                        FontSize="24"
+                                       Grid.Column="3"
+                                       VerticalTextAlignment="Center"
+                                       />
+                            </Grid>
+                        </Border>
                     </SwipeView>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

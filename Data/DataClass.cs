@@ -1,4 +1,5 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,11 +14,25 @@ public partial class DataClass : ObservableObject
     int currentChapter;
     [ObservableProperty]
     int maxChapter;
+    [ObservableProperty]
+    bool isEditing;
 
     public DataClass(string fieldName, int currentChapter, int maxChapter)
     {
         FieldName = fieldName;
         CurrentChapter = currentChapter;
         MaxChapter = maxChapter;
+    }
+
+    [RelayCommand]
+    void Edit()
+    {
+        IsEditing = true;
+    }
+
+    [RelayCommand]
+    void EndEdit()
+    {
+        IsEditing = false; 
     }
 }

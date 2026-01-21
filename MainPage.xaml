@@ -1,10 +1,10 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="ProgressApp.MainPage"
-             x:Name="ThisPage"
              xmlns:viewmodel="clr-namespace:ProgressApp.ViewModel"
              xmlns:data="clr-namespace:ProgressApp.Data"
+             x:Class="ProgressApp.MainPage"
+             x:Name="ThisPage"
              x:DataType="viewmodel:MainViewModel">
 
     <Grid RowDefinitions="100, Auto, Auto, *"
@@ -43,40 +43,64 @@
                     <SwipeView>
                         <SwipeView.RightItems>
                             <SwipeItems>
+                                <SwipeItem Text="Edit"
+                                           BackgroundColor="Yellow"
+                                           Command="{Binding EditCommand}"
+                                           IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" 
+                                           />
                                 <SwipeItem Text="Delete"
                                            BackgroundColor="Red"
                                            Command="{Binding BindingContext.DeleteCommand, Source={x:Reference ThisPage}}"
                                            CommandParameter="{Binding .}"
                                            />
+                                <SwipeItem Text="Save"
+                                           BackgroundColor="Green"
+                                           Command="{Binding EndEditCommand}"
+                                           IsVisible="{Binding IsEditing}"
+                                           />
                             </SwipeItems>
                         </SwipeView.RightItems>
                         <Border>
-                            <Grid Padding="0,2"
-                                  ColumnDefinitions=".8*, .085*, .03*, .085*"
-                                  RowSpacing="10"
-                                  ColumnSpacing="10"
-                                  >
-                                <Label Text="{Binding FieldName}"
-                                       FontSize="24"
-                                       Grid.Column="0"
-                                       VerticalTextAlignment="Center"
-                                        />
-                                <Label Text="{Binding CurrentChapter}"
-                                        FontSize="24"
-                                       Grid.Column="1"
-                                       HorizontalTextAlignment="End"
-                                       VerticalTextAlignment="Center"
-                                        />
-                                <Label Text="/"
-                                        FontSize="24"
-                                       Grid.Column="2"
-                                       VerticalTextAlignment="Center"
-                                        />
-                                <Label Text="{Binding MaxChapter}"
-                                        FontSize="24"
-                                       Grid.Column="3"
-                                       VerticalTextAlignment="Center"
-                                       />
+                            <Grid ColumnDefinitions="*,Auto,Auto,Auto"
+                              Padding="5">
+
+                                <!-- VIEW MODE -->
+                                <Label Grid.Column="0"
+                                   Text="{Binding FieldName}"
+                                   IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" 
+                                   FontSize="24"/>
+
+                                <Label Grid.Column="1"
+                                   Text="{Binding CurrentChapter}"
+                                   IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" 
+                                   FontSize="24"/>
+
+                                <Label Grid.Column="2"
+                                   Text="/"
+                                   IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" 
+                                   FontSize="24"/>
+
+                                <Label Grid.Column="3"
+                                   Text="{Binding MaxChapter}"
+                                   IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" 
+                                   FontSize="24"/>
+
+                                <!-- EDIT MODE -->
+                                <Entry Grid.Column="0"
+                                   Text="{Binding FieldName}"
+                                   IsVisible="{Binding IsEditing}" 
+                                   FontSize="24"/>
+
+                                <Entry Grid.Column="1"
+                                   Text="{Binding CurrentChapter}"
+                                   IsVisible="{Binding IsEditing}" 
+                                   FontSize="24"/>
+
+                                <Entry Grid.Column="3"
+                                   Text="{Binding MaxChapter}"
+                                   IsVisible="{Binding IsEditing}" 
+                                   FontSize="24"/>
+
                             </Grid>
                         </Border>
                     </SwipeView>

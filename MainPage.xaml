@@ -7,37 +7,66 @@
              x:Name="ThisPage"
              x:DataType="viewmodel:MainViewModel">
 
-    <Grid RowDefinitions="100, Auto, Auto, *"
+    <Grid RowDefinitions="100, Auto, Auto, Auto, *"
           ColumnDefinitions=".50*, .25*, .25*"
           Padding="10"
           RowSpacing="10"
           ColumnSpacing="10">
 
-        <Image Grid.ColumnSpan="2"
-               Source="dotnet_bot.png"
-               BackgroundColor="Transparent"/>
 
+        <HorizontalStackLayout Spacing="10">
+            <Button Text="−"
+            Command="{Binding DecreaseFontCommand}" />
+
+            <Label Text="{Binding ItemFontSize, StringFormat='{}{0:F0}'}"
+           VerticalOptions="Center"
+                   FontSize="{Binding ItemFontSize}"/>
+
+            <Button Text="+"
+            Command="{Binding IncreaseFontCommand}" />
+        </HorizontalStackLayout>
+
+        <!-- ADDING SECTION -->
         <Entry Placeholder="Enter name"
                Grid.Row="1"
                Grid.ColumnSpan="2"
                Grid.Column="0"
-               Text="{Binding Text}"/>
+               Text="{Binding Text}"
+               FontSize="{Binding ItemFontSize}"/>
         <Button Text="Add"
                 Command="{Binding AddCommand}"
                 Grid.Row="1"
-                Grid.Column="2"/>
+                Grid.Column="2"
+               FontSize="{Binding ItemFontSize}"/>
         <Entry Placeholder="Current Chapter"
                Grid.Row="2"
                Grid.Column="0"
-               Text="{Binding CurrentChapter}"/>
+               Text="{Binding CurrentChapter}"
+               FontSize="{Binding ItemFontSize}"/>
         <Entry Placeholder="Max Chapters"
                Grid.Row="2"
                Grid.ColumnSpan="2"
                Grid.Column="1"
-               Text="{Binding TotalChapter}"/>
-        <CollectionView Grid.Row="3" Grid.ColumnSpan="4"
+               Text="{Binding TotalChapter}"
+               FontSize="{Binding ItemFontSize}"/>
+        <Grid Grid.Row="3" Grid.ColumnSpan="4"
+              ColumnDefinitions="Auto,Auto,Auto,Auto,Auto">
+            <Button Text="{Binding SortByNameText}"
+                Grid.Row="1"
+                Grid.Column="1"
+                Margin="5"
+                Command="{Binding SortByNameCommand}"
+               FontSize="{Binding ItemFontSize}"/>
+            <Button Text="{Binding SortByCompletionText}"
+                Grid.Row="1"
+                Grid.Column="2"
+                Margin="5"
+                Command="{Binding SortByCompCommand}"
+               FontSize="{Binding ItemFontSize}"/>
+        </Grid>
+
+        <CollectionView Grid.Row="4" Grid.ColumnSpan="4"
                         ItemsSource="{Binding Items}">
-            
             <CollectionView.ItemTemplate>
                 <DataTemplate x:DataType="data:DataClass">
                     <SwipeView>
@@ -61,45 +90,66 @@
                             </SwipeItems>
                         </SwipeView.RightItems>
                         <Border>
-                            <Grid ColumnDefinitions="*,Auto,Auto,Auto"
-                              Padding="5">
+                            <Grid ColumnDefinitions="*,Auto,Auto,Auto,Auto,Auto"
+                              Padding="5"
+                              BackgroundColor="{Binding IsCompleted, Converter={StaticResource BoolToColorConverter}}">
 
                                 <!-- VIEW MODE -->
                                 <Label Grid.Column="0"
                                    Text="{Binding FieldName}"
                                    IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" 
-                                   FontSize="24"/>
+                                   FontSize="{Binding BindingContext.ItemFontSize, Source={x:Reference ThisPage}}"
+                                   VerticalTextAlignment="Center"/>
 
                                 <Label Grid.Column="1"
                                    Text="{Binding CurrentChapter}"
                                    IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" 
-                                   FontSize="24"/>
+                                   FontSize="{Binding BindingContext.ItemFontSize, Source={x:Reference ThisPage}}"
+                                   VerticalTextAlignment="Center"/>
 
                                 <Label Grid.Column="2"
                                    Text="/"
                                    IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" 
-                                   FontSize="24"/>
+                                   FontSize="{Binding BindingContext.ItemFontSize, Source={x:Reference ThisPage}}"
+                                   VerticalTextAlignment="Center"/>
 
                                 <Label Grid.Column="3"
                                    Text="{Binding MaxChapter}"
                                    IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" 
-                                   FontSize="24"/>
+                                   FontSize="{Binding BindingContext.ItemFontSize, Source={x:Reference ThisPage}}"
+                                   VerticalTextAlignment="Center"/>
+
+                                <Button Text="+"
+                                        Grid.Column="4"
+                                        BackgroundColor="Green"
+                                        Command="{Binding AddCompletedChapterCommand}"
+                                        IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" 
+                                        FontSize="24"
+                                        Margin="5"/>
+
+                                <Button Text="-"
+                                        Grid.Column="5"
+                                        BackgroundColor="Red"
+                                        Command="{Binding RemoveCompletedChapterCommand}"
+                                        IsVisible="{Binding IsEditing, Converter={StaticResource InverseBoolConverter}}" 
+                                        FontSize="24"
+                                        Margin="5"/>
 
                                 <!-- EDIT MODE -->
                                 <Entry Grid.Column="0"
                                    Text="{Binding FieldName}"
                                    IsVisible="{Binding IsEditing}" 
-                                   FontSize="24"/>
+                                   FontSize="{Binding BindingContext.ItemFontSize, Source={x:Reference ThisPage}}" />
 
                                 <Entry Grid.Column="1"
                                    Text="{Binding CurrentChapter}"
                                    IsVisible="{Binding IsEditing}" 
-                                   FontSize="24"/>
+                                   FontSize="{Binding BindingContext.ItemFontSize, Source={x:Reference ThisPage}}" />
 
                                 <Entry Grid.Column="3"
                                    Text="{Binding MaxChapter}"
                                    IsVisible="{Binding IsEditing}" 
-                                   FontSize="24"/>
+                                   FontSize="{Binding BindingContext.ItemFontSize, Source={x:Reference ThisPage}}" />
 
                             </Grid>
                         </Border>

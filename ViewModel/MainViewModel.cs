@@ -2,6 +2,7 @@
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.Maui.Storage;
 using ProgressApp.Data;
+using ProgressApp.Data.Enums;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -26,6 +27,7 @@ public partial class MainViewModel : ObservableObject
         Items = new ObservableCollection<DataClass>();
         LoadItems();
         Items.CollectionChanged += Items_CollectionChanged;
+        ItemFontSize = Preferences.Get(nameof(ItemFontSize), 14.0);
     }
 
     private void Items_CollectionChanged(object? sender, NotifyCollectionChangedEventArgs e)
@@ -40,6 +42,7 @@ public partial class MainViewModel : ObservableObject
 
         SaveItems();
     }
+
 
     private void Item_PropertyChanged(object? sender, PropertyChangedEventArgs e)
     {
@@ -58,6 +61,30 @@ public partial class MainViewModel : ObservableObject
     int currentChapter;
     [ObservableProperty]
     int totalChapter;
+    [ObservableProperty]
+    double itemFontSize;
+
+    bool isNameSortAsc = true;
+    bool isCompSortAsc = true; 
+    SortDirection nameSortDirection = SortDirection.Ascending;
+    SortDirection completionSortDirection = SortDirection.Ascending;
+
+
+    [RelayCommand]
+    void IncreaseFont()
+    {
+        ItemFontSize += 1;
+    }
+
+    [RelayCommand]
+    void DecreaseFont()
+    {
+        if (ItemFontSize - 1 < 6)
+            return;
+
+        ItemFontSize -= 1;
+    }
+
 
     [RelayCommand]
     void Add()
@@ -79,6 +106,58 @@ public partial class MainViewModel : ObservableObject
         }
     }
 
+    [RelayCommand]
+    void SortByName()
+    {
+        var sorted = isNameSortAsc
+            ? Items.OrderBy(i => i.FieldName)
+            : Items.OrderByDescending(i => i.FieldName);
+
+        ApplySort(sorted);
+        isNameSortAsc = !isNameSortAsc;
+
+        nameSortDirection =
+        nameSortDirection == SortDirection.Ascending
+            ? SortDirection.Descending
+            : SortDirection.Ascending;
+
+        OnPropertyChanged(nameof(SortByNameText));
+    }
+
+    [RelayCommand]
+    void SortByComp()
+    {
+        var sorted = isCompSortAsc
+            ? Items.OrderBy(i => i.CompPercentage)
+            : Items.OrderByDescending(i => i.CompPercentage);
+
+        ApplySort(sorted);
+        isCompSortAsc = !isCompSortAsc;
+
+        completionSortDirection =
+            completionSortDirection == SortDirection.Ascending
+                ? SortDirection.Descending
+                : SortDirection.Ascending;
+
+        OnPropertyChanged(nameof(SortByCompletionText));
+    }
+
+    private void ApplySort(IOrderedEnumerable<DataClass> sorted)
+    {
+        Items.CollectionChanged -= Items_CollectionChanged;
+        var list = sorted.ToList();
+
+        Items.Clear();
+
+        foreach (var item in list)
+        {
+            Items.Add(item);
+        }
+
+        Items.CollectionChanged += Items_CollectionChanged;
+        SaveItems();
+    }
+
     private void LoadItems()
     {
         if (!File.Exists(filePath))
@@ -90,7 +169,11 @@ public partial class MainViewModel : ObservableObject
         if (loader is null)
             return;
 
-        Items = loader;
+        Items = loader; 
+        foreach (var item in Items)
+        {
+            item.PropertyChanged += Item_PropertyChanged;
+        }
     }
 
     private void SaveItems()
@@ -98,4 +181,21 @@ public partial class MainViewModel : ObservableObject
         var json = JsonSerializer.Serialize(Items);
         File.WriteAllText(filePath, json);
     }
+
+    public string SortByNameText =>
+    nameSortDirection == SortDirection.Ascending
+        ? "Name ↓"
+        : "Name ↑";
+
+    public string SortByCompletionText =>
+        completionSortDirection == SortDirection.Ascending
+            ? "% ↓"
+            : "% ↑";
+
+    partial void OnItemFontSizeChanged(double value)
+    {
+        Preferences.Set(nameof(ItemFontSize), value);
+    }
+
+
 }

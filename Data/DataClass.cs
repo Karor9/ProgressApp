@@ -43,7 +43,7 @@ public partial class DataClass : ObservableObject
 
     internal void ChangeCompletedStatus()
     {
-        if(CurrentChapter == MaxChapter)
+        if(CurrentChapter >= MaxChapter && MaxChapter > 0)
             IsCompleted = true;
         else
             IsCompleted = false;
@@ -52,7 +52,7 @@ public partial class DataClass : ObservableObject
     [RelayCommand]
     void AddCompletedChapter()
     {
-        if (CurrentChapter + 1 > MaxChapter)
+        if (CurrentChapter + 1 > MaxChapter && MaxChapter > 0)
             return;
         IsEditing = true;
         CurrentChapter++;
